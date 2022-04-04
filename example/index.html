@@ -1,0 +1,83 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot LivePerson Adapter demo</title>
+
+    <script type="text/javascript" src="https://lpcdn.lpsnmedia.net/api/chat/public/lpChat.min.js"></script>
+
+    <!-- BEGIN LivePerson Monitor. -->
+    
+    <!-- Paste the Web Tag from your Agent Workspace (https://knowledge.liveperson.com/getting-started-add-the-liveperson-tag-to-your-website.html)-->
+    
+    <!-- END LivePerson Monitor. -->
+
+    <!-- Import LivePerson adapter -->
+    <script type="text/javascript" src="../src/liveperson-adapter.js?v=1"></script>
+    
+    <!-- Import the Inbenta Chatbot SDK (works with SDK version 1.68.2, but you can try the last one listed [here](https://developers.inbenta.io/chatbot/chatbot-js-sdk/sdk-subresource-integrity)) -->
+    <script src="https://sdk.inbenta.io/chatbot/1.68.2/inbenta-chatbot-sdk.js" integrity="sha384-nZZi80wWfWj3/yG3zoDc13OnX9rMUWts5mhBMAkf2jRf7MeHvxwZj3zAqn7RCgku" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+
+<body class="inb-demo">
+    <header class="inb-demo__header">
+        <div class="inb-demo__header__title">
+            <a href="https://www.inbenta.com" target="_blank"><img class="inb-demo__header__image" src="https://www.inbenta.com/wp-content/themes/inbenta/img/logo-inbenta.svg" alt="Inbenta"></a>
+        </div>
+    </header>
+    <main class="inb-demo__main">
+        <div class="inb-demo__main__content">
+            <h1 class="inb-demo__title">Chatbot LivePerson Adapter demo</h1>
+        </div>
+    </main>
+
+    <!-- INBENTA CHATBOT SDK-->
+    <script type="text/javascript">
+        window.lpTag = window.lpTag || {};
+        lpTag.sdes = lpTag.sdes || [];
+        lpTag.events = lpTag.events || [];
+
+        //Live Person config
+        let livePerson = {
+            account: '<AccountNumber>',
+            appKey: '721c180b09eb463d9f3191c41762bb68', //LivePerson fixed global value (do not change)
+            chatUrl: localStorage.getItem('livePerson_chatUrl') == null ? '' : localStorage.getItem('livePerson_chatUrl'),
+            conversationId: '',
+            visitorName: '',
+            labels: {
+                onEscalate: 'We are processing your request, sooner you will be redirected to LivePerson chat.',
+                onEscalateEnds: 'Agent conversation finished, ask me anything'
+            },
+            lang: 'en-US'
+        };
+
+        // Inbenta Chatbot SDK authentication
+        // More info: https://developers.inbenta.io/chatbot/chatbot-js-sdk/sdk-setup
+        let sdkAuth = {
+            inbentaKey: "<YOUR_API_KEY>",
+            domainKey: "<YOUR_DOMAIN_KEY>"
+        }
+
+        // Inbenta Chatbot SDK configuration
+        // More info: https://developers.inbenta.io/chatbot/javascript-sdk/sdk-configuration
+        let sdkConf = {
+            chatbotId: 'liveperson_chatbot', // chatbot identification
+            environment: 'development', // chatbot environment (production | development)
+            closeButton: {
+                visible: true
+            }, // enable close button
+            adapters: [
+                window.SDKNLEscalation2(inbentaPromiseAgentsAvailableTrue),
+                window.inbentaLivePersonAdapter()
+            ]
+        }
+
+        // Initiate Chatbot
+        InbentaChatbotSDK.buildWithDomainCredentials(sdkAuth, sdkConf);
+    </script>
+</body>
+
+</html>

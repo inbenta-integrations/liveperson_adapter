@@ -1,0 +1,120 @@
+/* CSS for tests */
+
+/* minimal reset css */
+.inb-demo {
+    margin: 0;
+}
+.inb-demo * {
+    box-sizing: border-box;
+}
+.inb-demo *:focus {
+    outline: 0 transparent;
+}
+
+.inb-demo__main__content {
+    font-family: helvetica, sans-serif;
+}
+
+/* generic */
+.inb-demo__ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.inb-demo__button,
+.inb-demo__title {
+    margin: 0;
+}
+.inb-demo__main {
+    padding: 16px;
+}
+.inb-demo__main__content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* header */
+.inb-demo__header {
+    font-weight: bold;
+    font-size: 16px;
+    text-align: right;
+    color: #04221d;
+    background-color: #e6e6e6;
+    border-bottom: 1px solid #d8d8d8;
+    padding: 17px;
+}
+.inb-demo__header__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.inb-demo__header__title a{
+    height: 22px;
+}
+.inb-demo__header__image {
+    width: 72px;
+}
+
+/* title */
+.inb-demo__title {
+    margin-top: 40px;
+    margin-bottom: 24px;
+    font-size: 24px;
+}
+
+/* button */
+.inb-demo__button {
+    display: inline-block;
+    min-height: 30px;
+    position: relative;
+    padding-left: 24px;
+    text-decoration: none;
+    color: #333;
+    margin-bottom: 6px;
+    transition: .2s ease-out;
+}
+.inb-demo__button:hover {
+    color: #f6253a;
+}
+.inb-demo__button:before,
+.inb-demo__button:after {
+    position: absolute;
+    left: 8px;
+    top: 9px;
+
+    content: "";
+    display: inline-block;
+    background-color: #333;
+    border-radius: 4px;
+    width: 6px;
+    height: 2px;
+    transition: .2s ease-out;
+}
+.inb-demo__button:before {
+    transform: rotate(45deg);
+    top: 6px;
+}
+.inb-demo__button:after {
+    transform: rotate(-45deg);
+}
+.inb-demo__button:hover:before,
+.inb-demo__button:hover:after {
+    background-color: #f6253a;
+    left: 12px;
+}
+.inb-demo__button.inb-demo__button__back:after {
+    top: 6px;
+    left: 10px;
+}
+.inb-demo__button.inb-demo__button__back:before {
+    top: 9px;
+    left: 10px;
+}
+.inb-demo__button.inb-demo__button__back:hover:before,
+.inb-demo__button.inb-demo__button__back:hover:after {
+    background-color: #f6253a;
+    left: 6px;
+}
