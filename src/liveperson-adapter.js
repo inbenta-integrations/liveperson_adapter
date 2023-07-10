@@ -103,7 +103,10 @@ window.addEventListener("message", (event) => {
         let data = JSON.parse(event.data);
         if (data) {
             let body = JSON.parse(data.body);
-            if (body.chat !== undefined && body.chat.info !== undefined && body.chat.info.chatSessionKey !== undefined) {
+            if (body.chat !== undefined && body.chat.info !== undefined &&
+                body.chat.info.chatSessionKey !== undefined &&
+                body.chat.info.rtSessionId === livePerson.rtSessionId
+            ) {
                 livePerson.conversationId = body.chat.info.chatSessionKey;
             }
         }
@@ -120,6 +123,9 @@ var inbentaLivePersonAdapter = function() {
         let conversation = null;
         let version = '1.0';
         let checkUrlService = 'https://api.liveperson.net/api/account/';
+        let messageOnWindowClose = livePerson.labels.onEscalateEnds;
+        let windowClosed = false;
+        livePerson.rtSessionId = '';
         checkUrlService += livePerson.account + '/service/conversationVep/baseURI?version=' + version;
         if (livePerson.chatUrl === '') {
             makeAPIRequest('GET', checkUrlService).then(function(data) {
@@ -140,29 +146,42 @@ var inbentaLivePersonAdapter = function() {
                 setVisitorName(livePerson.visitorName);
                 sendTranscript(conversation);
             }
-            else if (data.state === 'ended') {
+            else if (data.state === 'ended' || data.state === 'postChat') {
                 //Close LivePerson chat window
                 document.getElementsByClassName('lp_close')[0].click(); // TODO also this clases: lpc_maximized-header__close-button lpc_desktop
             }
             else if (data.state === 'offline') {
-                //Show inbenta chatbot
-                chatbot.actions.showConversationWindow();
+                // Set the message for no agents available
+                messageOnWindowClose = livePerson.labels.noAgentsAvailable;
+            }
+        });
+
+        // Gets the ID of the conversation (different than "chatSessionKey")
+        lpTag.events.bind('lpUnifiedWindow', 'conversationInfo', function (data) {
+            if (data.state === 'initialised') {
+                livePerson.rtSessionId = data.conversationId;
             }
         });
 
         //Detects when LivePerson window is closed (and show Inbenta's Chatbot)
         lpTag.events.bind('lpUnifiedWindow', 'windowClosed', function() {
             //Window is closed
-            chatbot.actions.displaySystemMessage({
-                message: livePerson.labels.onEscalateEnds
-            });
-            chatbot.actions.showConversationWindow();
+            if (!windowClosed) {
+                livePerson.rtSessionId = 'conversation_finished';
+                windowClosed = true;
+                chatbot.actions.displaySystemMessage({
+                    message: messageOnWindowClose
+                });
+                chatbot.actions.showConversationWindow();
+            }
         });
 
         // Detects when LivePerson chat button is ready (hides it)
         lpTag.events.bind('LP_OFFERS', 'OFFER_DISPLAY', function(data) {
             //LivePerson is ready to start, hides the chat bubble
             livePerson.conversationId = '';
+            windowClosed = false;
+            messageOnWindowClose = livePerson.labels.onEscalateEnds;
             let buttonTmp = document.getElementsByClassName('LPMcontainer')[0];
             buttonId = buttonTmp.getAttribute('id');
             buttonTmp.style.display = 'none';
